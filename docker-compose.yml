@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: beeflow
+      MYSQL_USER: beeflow
+      MYSQL_PASSWORD: beeflow
+      MYSQL_ROOT_PASSWORD: beeflow
+    volumes:
+      - beeflow_mysql:/var/lib/mysql
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+
+volumes:
+  beeflow_mysql:
