@@ -12,10 +12,15 @@ export default async function NewContentPage({
   searchParams: Promise<{ company?: string }>;
 }) {
   const session = await requireSession();
-  const admin = session.user.role === Role.ADMIN;
-  const backHref = admin ? "/work" : "/";
-  const backLabel = admin ? "← İşler" : "← Dashboard";
   const sp = await searchParams;
+
+  // Admin: iş/içerik tek oluşturma sayfasında
+  if (session.user.role === Role.ADMIN) {
+    const qs = new URLSearchParams({ type: "content" });
+    if (sp.company) qs.set("company", sp.company);
+    redirect(`/work/new?${qs.toString()}`);
+  }
+
   const companies = await getCompaniesContentPlans();
   const ordered = sp.company
     ? [
@@ -27,14 +32,14 @@ export default async function NewContentPage({
   async function action(formData: FormData) {
     "use server";
     await createContent(formData);
-    redirect(admin ? "/work" : "/");
+    redirect("/");
   }
 
   return (
     <div className="bf-page mx-auto max-w-3xl space-y-6">
       <div>
-        <Link href={backHref} className="bf-link text-sm">
-          {backLabel}
+        <Link href="/" className="bf-link text-sm">
+          ← Dashboard
         </Link>
         <h1 className="bf-page-title mt-2">Yeni içerik</h1>
         <p className="bf-page-sub">
@@ -42,11 +47,7 @@ export default async function NewContentPage({
         </p>
       </div>
 
-      <NewContentForm
-        action={action}
-        companies={ordered}
-        cancelHref={backHref}
-      />
+      <NewContentForm action={action} companies={ordered} cancelHref="/" />
     </div>
   );
 }

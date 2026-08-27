@@ -26,7 +26,9 @@ export default auth((req) => {
     (pathname === "/work" ||
       pathname.startsWith("/work/") ||
       pathname === "/companies" ||
-      pathname.startsWith("/companies/")) &&
+      pathname.startsWith("/companies/") ||
+      pathname === "/employees" ||
+      pathname.startsWith("/employees/")) &&
     req.auth.user?.role !== "ADMIN"
   ) {
     return NextResponse.redirect(new URL("/", req.nextUrl.origin));

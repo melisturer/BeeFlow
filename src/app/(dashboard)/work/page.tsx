@@ -2,9 +2,8 @@ import Link from "next/link";
 import { Button, Card, Chip } from "@heroui/react";
 import { addDays, format, startOfDay } from "date-fns";
 import { tr } from "date-fns/locale";
-import { createTask, syncRecurringTasks } from "@/actions/tasks";
+import { syncRecurringTasks } from "@/actions/tasks";
 import { ContentPlanSummary } from "@/components/contents/content-plan-summary";
-import { PlanScheduleFields } from "@/components/contents/plan-schedule-fields";
 import {
   WorkBulkItem,
   WorkBulkList,
@@ -12,10 +11,8 @@ import {
 import {
   FormField,
   SelectInput,
-  TextAreaInput,
-  TextInput,
 } from "@/components/ui/form-field";
-import { TaskPriority, TaskStatus } from "@/generated/prisma/client";
+import { TaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import {
   contentStatusLabels,
@@ -83,7 +80,7 @@ export default async function WorkPage({
       ? (sp.status as TaskStatus)
       : undefined;
 
-  const [tasks, templates, companies, employees] = await Promise.all([
+  const [tasks, templates, companies] = await Promise.all([
     prisma.task.findMany({
       where: {
         ...excludeTaskTemplatesFilter(),
@@ -104,10 +101,6 @@ export default async function WorkPage({
     }),
     prisma.company.findMany({
       where: { status: { not: "ARCHIVED" } },
-      orderBy: { name: "asc" },
-    }),
-    prisma.user.findMany({
-      where: { active: true },
       orderBy: { name: "asc" },
     }),
   ]);
@@ -184,100 +177,10 @@ export default async function WorkPage({
             Görev, yineleme ve içerik hedefleri tek yerde.
           </p>
         </div>
-        <Link href="/contents/new" className="bf-btn bf-btn-dark">
-          Yeni içerik
+        <Link href="/work/new" className="bf-btn bf-btn-dark">
+          Yeni ekle
         </Link>
       </div>
-
-      <Card className="bf-panel">
-        <Card.Header className="mb-4">
-          <Card.Title>Yeni iş</Card.Title>
-        </Card.Header>
-        <Card.Content>
-          <form action={createTask} className="grid gap-4 md:grid-cols-2">
-            <div className="md:col-span-2">
-              <FormField label="Başlık" htmlFor="title">
-                <TextInput id="title" name="title" required />
-              </FormField>
-            </div>
-            <div className="md:col-span-2">
-              <FormField label="Açıklama" htmlFor="description">
-                <TextAreaInput id="description" name="description" />
-              </FormField>
-            </div>
-            <FormField label="Firma" htmlFor="companyId">
-              <SelectInput id="companyId" name="companyId" defaultValue="">
-                <option value="">Seçilmedi</option>
-                {companies.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </SelectInput>
-            </FormField>
-            <FormField label="Atanan" htmlFor="assigneeId">
-              <SelectInput
-                id="assigneeId"
-                name="assigneeId"
-                defaultValue=""
-              >
-                <option value="">Seçilmedi</option>
-                {employees.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
-              </SelectInput>
-            </FormField>
-            <FormField label="Öncelik" htmlFor="priority">
-              <SelectInput
-                id="priority"
-                name="priority"
-                defaultValue={TaskPriority.NORMAL}
-              >
-                {Object.entries(taskPriorityLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </SelectInput>
-            </FormField>
-            <FormField label="Otomatik yineleme" htmlFor="recurrence">
-              <SelectInput id="recurrence" name="recurrence" defaultValue="NONE">
-                {Object.entries(taskRecurrenceLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </SelectInput>
-            </FormField>
-            <input type="hidden" name="status" value={TaskStatus.WAITING} />
-            <input type="hidden" name="startDate" value="" />
-            <input type="hidden" name="dueDate" value="" />
-            <p className="text-xs text-black/45 md:col-span-2">
-              Yok = sadece bugün. Her gün / hafta / ay = seçtiğin periyotta
-              takvime otomatik yazılır.
-            </p>
-            <FormField label="Hedef dönemi" htmlFor="planPeriod">
-              <SelectInput
-                id="planPeriod"
-                name="planPeriod"
-                defaultValue="WEEKLY"
-              >
-                {Object.entries(planPeriodLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </SelectInput>
-            </FormField>
-            <PlanScheduleFields />
-            <div className="md:col-span-2">
-              <Button type="submit">İş oluştur</Button>
-            </div>
-          </form>
-        </Card.Content>
-      </Card>
 
       <Card className="bf-panel">
         <form method="get" className="grid gap-3 md:grid-cols-3">
@@ -320,6 +223,9 @@ export default async function WorkPage({
       {tasks.length === 0 && templates.length === 0 ? (
         <Card className="bf-panel">
           <p className="text-sm text-black/50">İş bulunamadı.</p>
+          <Link href="/work/new" className="bf-link mt-2 inline-block text-sm">
+            Yeni iş veya içerik ekle
+          </Link>
         </Card>
       ) : (
         <WorkBulkList
@@ -432,7 +338,7 @@ export default async function WorkPage({
                       </Link>
                       {task.companyId ? (
                         <Link
-                          href={`/contents/new?company=${task.companyId}`}
+                          href={`/work/new?type=content&company=${task.companyId}`}
                           className="bf-link text-sm"
                         >
                           İçerik ekle

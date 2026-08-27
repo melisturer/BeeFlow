@@ -82,6 +82,7 @@ export async function updateEmployee(id: string, formData: FormData) {
   });
 
   revalidatePath("/employees");
+  revalidatePath(`/employees/${id}`);
 }
 
 export async function deleteEmployee(id: string) {
