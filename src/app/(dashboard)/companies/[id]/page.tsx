@@ -17,6 +17,7 @@ import {
   SelectInput,
   TextInput,
 } from "@/components/ui/form-field";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import {
   ContentStatus,
   SocialPlatform,
@@ -114,11 +115,14 @@ export default async function CompanyDetailPage({
               Arşivle
             </Button>
           </form>
-          <form action={deleteCompany.bind(null, company.id)}>
+          <ConfirmDeleteForm
+            action={deleteCompany.bind(null, company.id)}
+            message={`“${company.name}” firması silinecek. Emin misiniz?`}
+          >
             <Button type="submit" variant="danger" size="sm">
               Sil
             </Button>
-          </form>
+          </ConfirmDeleteForm>
         </div>
       </div>
 
@@ -244,11 +248,14 @@ export default async function CompanyDetailPage({
               >
                 <Chip size="sm">{platformLabels[account.platform]}</Chip>
                 <span className="text-sm font-semibold">@{account.username}</span>
-                <form action={deleteSocialAccount.bind(null, account.id)}>
+                <ConfirmDeleteForm
+                  action={deleteSocialAccount.bind(null, account.id)}
+                  message={`@${account.username} hesabı silinecek. Emin misiniz?`}
+                >
                   <button type="submit" className="text-xs text-[var(--da-danger)]">
                     Sil
                   </button>
-                </form>
+                </ConfirmDeleteForm>
               </div>
             ))
           )}

@@ -18,6 +18,7 @@ import {
   TextAreaInput,
   TextInput,
 } from "@/components/ui/form-field";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import { Role, TaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import {
@@ -152,11 +153,14 @@ export default async function TaskDetailPage({
             </Link>
           ) : null}
           {admin ? (
-            <form action={deleteTask.bind(null, task.id)}>
+            <ConfirmDeleteForm
+              action={deleteTask.bind(null, task.id)}
+              message={`“${task.title}” işi silinecek. Emin misiniz?`}
+            >
               <Button type="submit" variant="danger" size="sm">
                 Sil
               </Button>
-            </form>
+            </ConfirmDeleteForm>
           ) : null}
         </div>
       </div>

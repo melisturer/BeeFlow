@@ -3,6 +3,7 @@ import { Button, Card, Chip } from "@heroui/react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { deleteEmployee } from "@/actions/users";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import { prisma } from "@/lib/db";
 import { roleLabels } from "@/lib/labels";
 import { requireAdmin } from "@/lib/session";
@@ -70,11 +71,14 @@ export default async function EmployeesPage() {
                         >
                           Düzenle
                         </Link>
-                        <form action={deleteEmployee.bind(null, user.id)}>
+                        <ConfirmDeleteForm
+                          action={deleteEmployee.bind(null, user.id)}
+                          message={`“${user.name}” silinecek. Emin misiniz?`}
+                        >
                           <Button type="submit" size="sm" variant="danger">
                             Sil
                           </Button>
-                        </form>
+                        </ConfirmDeleteForm>
                       </div>
                     </td>
                   </tr>

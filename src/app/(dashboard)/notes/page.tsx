@@ -2,6 +2,7 @@ import { Button, Card, Chip } from "@heroui/react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { createNote, deleteNote } from "@/actions/notes";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import {
   FormField,
   SelectInput,
@@ -187,11 +188,14 @@ export default async function NotesPage({
                   <Chip size="sm">{note.company.name}</Chip>
                 ) : null}
               </div>
-              <form action={deleteNote.bind(null, note.id)}>
+              <ConfirmDeleteForm
+                action={deleteNote.bind(null, note.id)}
+                message="Bu not silinecek. Emin misiniz?"
+              >
                 <Button type="submit" size="sm" variant="danger">
                   Sil
                 </Button>
-              </form>
+              </ConfirmDeleteForm>
             </div>
             <p className="whitespace-pre-wrap text-sm leading-relaxed">
               {note.body}

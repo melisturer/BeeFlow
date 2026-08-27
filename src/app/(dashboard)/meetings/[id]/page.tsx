@@ -4,6 +4,7 @@ import { Button, Card } from "@heroui/react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { deleteMeeting, updateMeeting } from "@/actions/meetings";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import {
   FormField,
   TextAreaInput,
@@ -68,11 +69,14 @@ export default async function MeetingDetailPage({
             {meeting.time} · {meeting.creator.name}
           </p>
         </div>
-        <form action={deleteMeeting.bind(null, meeting.id)}>
+        <ConfirmDeleteForm
+          action={deleteMeeting.bind(null, meeting.id)}
+          message={`“${meeting.title}” toplantısı silinecek. Emin misiniz?`}
+        >
           <Button type="submit" variant="danger" size="sm">
             Sil
           </Button>
-        </form>
+        </ConfirmDeleteForm>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

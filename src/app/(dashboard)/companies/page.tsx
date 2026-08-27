@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button, Card, Chip } from "@heroui/react";
 import { deleteCompany } from "@/actions/companies";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import { prisma } from "@/lib/db";
 import { companyStatusLabels } from "@/lib/labels";
 import { requireAdmin } from "@/lib/session";
@@ -83,11 +84,14 @@ export default async function CompaniesPage() {
                         >
                           Düzenle
                         </Link>
-                        <form action={deleteCompany.bind(null, company.id)}>
+                        <ConfirmDeleteForm
+                          action={deleteCompany.bind(null, company.id)}
+                          message={`“${company.name}” firması silinecek. Emin misiniz?`}
+                        >
                           <Button type="submit" variant="danger" size="sm">
                             Sil
                           </Button>
-                        </form>
+                        </ConfirmDeleteForm>
                       </div>
                     </td>
                   </tr>

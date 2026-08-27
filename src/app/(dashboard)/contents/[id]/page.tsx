@@ -19,6 +19,7 @@ import {
   TextAreaInput,
   TextInput,
 } from "@/components/ui/form-field";
+import { ConfirmDeleteForm } from "@/components/ui/confirm-delete-form";
 import { ContentStatus, Role } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import {
@@ -97,11 +98,14 @@ export default async function ContentDetailPage({
             </Link>
           ) : null}
           {admin ? (
-            <form action={deleteContent.bind(null, content.id)}>
+            <ConfirmDeleteForm
+              action={deleteContent.bind(null, content.id)}
+              message={`“${content.title}” içeriği silinecek. Emin misiniz?`}
+            >
               <Button type="submit" variant="danger" size="sm">
                 Sil
               </Button>
-            </form>
+            </ConfirmDeleteForm>
           ) : null}
         </div>
       </div>
